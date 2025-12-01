@@ -1,6 +1,7 @@
 package advent01
 
 import (
+	"fmt"
 	"strconv"
 
 	"advent2024/util"
@@ -11,23 +12,39 @@ func Solution(inputFile string) (part1, part2 any) {
 
 	location := 50
 	zeroCount := 0
+	zeroCountPart2 := 0
 
 	for _, line := range lines {
 		dir := line[0]
 		num, _ := strconv.Atoi(line[1:])
 		if dir == 'L' {
+			if location == 0 && num != 0 {
+				zeroCountPart2--
+			}
 			location -= num
+
+			for location < 0 {
+				location += 100
+				zeroCountPart2++
+			}
+			if location == 0 {
+				zeroCountPart2++
+			}
 		} else {
 			location += num
+			for location >= 100 {
+				location -= 100
+				zeroCountPart2++
+			}
 		}
-		for location < 0 {
-			location += 100
-		}
-		location = location % 100
 		if location == 0 {
 			zeroCount++
 		}
+
+		if inputFile == "test3.txt" {
+			fmt.Println(line, " ", zeroCountPart2)
+		}
 	}
 
-	return zeroCount, 0
+	return zeroCount, zeroCountPart2
 }
