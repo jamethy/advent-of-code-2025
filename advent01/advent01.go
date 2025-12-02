@@ -40,10 +40,6 @@ func Solution(inputFile string) (part1, part2 any) {
 		if location == 0 {
 			zeroCount++
 		}
-
-		if inputFile == "test3.txt" {
-			fmt.Println(line, " ", zeroCountPart2)
-		}
 	}
 
 	return zeroCount, zeroCountPart2
