@@ -1,40 +1,54 @@
 package advent03
 
 import (
-	"strconv"
-
 	"advent2024/util"
+	"advent2024/util/mathutil"
 )
 
 func Solution(inputFile string) (part1, part2 any) {
 	lines := util.ReadFile(inputFile)
 
-	part1Jotalge := 0
+	part1Joltage, part2Joltage := 0, 0
 	for _, line := range lines {
-		currentMax := 0
-		maxFirstChar := '0'
-		for i, char := range line {
-			if i >= len(line)-1 {
-				break
-			}
-			if char < maxFirstChar {
-				continue
-			}
-			maxFirstChar = char
-			maxSecondChar := '0'
-			for _, char2 := range line[i+1:] {
-				if char2 < maxSecondChar {
-					continue
-				}
-				maxSecondChar = char2
-			}
-			v, _ := strconv.Atoi(string(maxFirstChar) + string(maxSecondChar))
-			if v > currentMax {
-				currentMax = v
-			}
-		}
-		part1Jotalge += currentMax
+		nums := util.ParseIntList(line, "")
+
+		part1ForLine := largestRemainingNum(nums, 2)
+		part1Joltage += part1ForLine
+
+		part2ForLine := largestRemainingNum(nums, 12)
+		part2Joltage += part2ForLine
 	}
 
-	return part1Jotalge, 0
+	return part1Joltage, part2Joltage
+}
+
+func largestRemainingNum(nums []int, size int) int {
+	if size == 0 {
+		return 0
+	}
+	maxNum := 0
+	for i, n := range nums {
+		if i > len(nums)-size {
+			break
+		}
+		if n > maxNum {
+			maxNum = n
+		}
+	}
+	maxValue := 0
+	for i, n := range nums {
+		if i > len(nums)-size {
+			break
+		}
+		if n != maxNum {
+			continue
+		}
+		maxNum = n
+		maxRemaining := largestRemainingNum(nums[i+1:], size-1)
+		potentialMax := maxNum*mathutil.IntPow(10, size-1) + maxRemaining
+		if potentialMax > maxValue {
+			maxValue = potentialMax
+		}
+	}
+	return maxValue
 }
