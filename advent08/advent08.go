@@ -51,15 +51,11 @@ func Solution(inputFile string, iterations int) (part1, part2 any) {
 
 	circuits := make(map[Point]int)
 	circuit := 1
-	iterationCount := 0
-	for _, conn := range connections {
+
+	joinCircuit := func(conn Connection) {
 		c1, c1ok := circuits[conn.p1]
 		c2, c2ok := circuits[conn.p2]
 		if c1ok && c2ok {
-			//if c1 == c2 {
-			//	iterationCount++
-			//	continue
-			//}
 			// move them
 			for p, c := range circuits {
 				if c == c2 {
@@ -75,10 +71,13 @@ func Solution(inputFile string, iterations int) (part1, part2 any) {
 			circuits[conn.p2] = circuit
 			circuit++
 		}
-		iterationCount++
-		if iterationCount == iterations {
+	}
+
+	for i, conn := range connections {
+		if i == iterations {
 			break
 		}
+		joinCircuit(conn)
 	}
 
 	circuitCounts := make(map[int]int)
@@ -90,5 +89,26 @@ func Solution(inputFile string, iterations int) (part1, part2 any) {
 	})
 	part1 = ordered[0] * ordered[1] * ordered[2]
 
-	return part1, 0
+	for i := iterations; i < len(connections); i++ {
+		conn := connections[i]
+		joinCircuit(conn)
+
+		if len(circuits) < len(points) {
+			continue
+		}
+
+		uniqueCircuits := make(map[int]struct{})
+		for _, c := range circuits {
+			uniqueCircuits[c] = struct{}{}
+			if len(uniqueCircuits) > 1 {
+				break
+			}
+		}
+		if len(uniqueCircuits) == 1 {
+			part2 = conn.p1.x * conn.p2.x
+			break
+		}
+	}
+
+	return part1, part2
 }
