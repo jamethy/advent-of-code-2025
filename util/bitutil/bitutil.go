@@ -39,9 +39,13 @@ func ParseBinary(s string) (uint, error) {
 }
 
 func XOR(a uint, b uint) uint {
+	return LimitedXOR(a, b, 32)
+}
+
+func LimitedXOR(a uint, b uint, limit uint) uint {
 	var c uint
 	var i uint
-	for i = 0; i < 32; i++ {
+	for i = 0; i < limit; i++ {
 		aSet := IsBitSet(a, i)
 		bSet := IsBitSet(b, i)
 		c = SetBit(c, i, (aSet || bSet) && !(aSet && bSet))
